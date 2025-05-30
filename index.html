@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Affluent Summer Hotspot Destinations Map</title> 
+    <script>
+        L_NO_TOUCH = false;
+        L_DISABLE_3D = false;
+    </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map_container {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+        
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        #map_container { 
+            position: relative;
+            width: 100%; 
+            height: 100%;
+            left: 0;
+            top: 0;
+            background-color: #f0f0f0; 
+        }
+        .london-numeric-marker { 
+            /* Styles for London marker are inline */
+        }
+        .map-legend {
+            position: fixed;
+            bottom: 20px; 
+            left: 20px; 
+            z-index: 1000; 
+            background: rgba(255,255,255,0.95); 
+            border: 1px solid #1B365D; 
+            border-radius: 8px; 
+            padding: 10px 15px;
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            font-size: 11px; 
+            color: #333; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .map-legend b {
+            color:#C5A770;
+            font-size: 13px; 
+            display: block;
+            margin-bottom: 5px;
+        }
+        .map-legend div {
+            margin-bottom: 3px; 
+            display: flex; 
+            align-items: center;
+        }
+        .map-legend span {
+            width:12px; 
+            height:12px;
+            display:inline-block;
+            border-radius:50%;
+            margin-right:8px;
+            border:1px solid #1B365D; 
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 8px;
+        }
+        .leaflet-popup-content {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .leaflet-popup-content b {
+            font-size: 14px;
+            color: #1B365D;
+        }
+    </style>
+        
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+
+</head>
+<body>
+    
+<div class="map-legend" role="figure" aria-labelledby="legend-title">
+    <b id="legend-title">Affluent Summer Hotspot Destinations</b>
+    <div><span style='background:#C5A770;'></span>Mediterranean</div>
+    <div><span style='background:#1B365D;'></span>Greek Islands</div>
+    <div><span style='background:#EDECE6; border-color: #C5A770;'></span>Spain/Balearics</div> 
+    <div><span style='background:#BFBFBF;'></span>Switzerland</div>
+    <div><span style='background:#A4C8D1;'></span>Caribbean</div>
+    <div><span style='background:#1B365D;'></span>US East Coast</div>
+    <div><span style='background:#CD7F32;'></span>Middle East</div>
+    <div><span style='background:#8F9779;'></span>Croatia/Montenegro</div>
+</div>
+    
+<div class="folium-map" id="map_container" aria-label="Interactive map of affluent summer hotspot destinations"></div>
+        
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var map_instance = L.map(
+        "map_container", 
+        {
+            center: [45, 15], 
+            crs: L.CRS.EPSG3857,
+            zoom: 4, 
+            zoomControl: true, 
+            preferCanvas: false, 
+        }
+    );
+
+    var tile_layer = L.tileLayer(
+        "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+        {
+            "attribution": "\u0026copy; \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e", 
+            "detectRetina": false, 
+            "maxNativeZoom": 18, 
+            "maxZoom": 18, 
+            "minZoom": 2, 
+            "noWrap": false, 
+            "opacity": 1, 
+            "subdomains": "abc", 
+            "tms": false
+        }
+    ).addTo(map_instance);
+    
+    var marker_cluster_group = L.markerClusterGroup({}); 
+    marker_cluster_group.options.iconCreateFunction =
+        function(cluster){
+          var count = cluster.getChildCount();
+          var color = '#1B365D'; 
+          return new L.DivIcon({
+            html: `<div style="background:${color};color:#FFFFFF;border:2px solid #C5A770;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;">${count}</div>`,
+            className: 'custom-cluster-icon', 
+            iconSize: [40,40],
+            iconAnchor: [20, 20] 
+          });
+        };
+    map_instance.addLayer(marker_cluster_group);
+    
+    function createPopup(locationName, regionName) {
+        const popup = L.popup({"maxWidth": 280});
+        const div = document.createElement('div');
+        div.innerHTML = `<b>${locationName}</b><br>${regionName}`;
+        popup.setContent(div);
+        return popup;
+    }
+
+    var allMarkersForBoundsCalculation = []; 
+
+    var medColor = "#C5A770";
+    var markersDataMed = [
+        {lat: 43.7384, lng: 7.4246, name: "Monaco"}, {lat: 43.267, lng: 6.64, name: "Saint-Tropez"},
+        {lat: 43.5528, lng: 7.0174, name: "Cannes"}, {lat: 43.5804, lng: 7.1251, name: "Antibes"},
+        {lat: 43.7102, lng: 7.262, name: "Nice"}, {lat: 43.5485, lng: 7.0291, name: "Provence-Alpes-Côte d’Azur (06230)"},
+        {lat: 41.3871, lng: 9.159, name: "Bonifacio"}, {lat: 41.5911, lng: 9.2797, name: "Porto-Vecchio"},
+        {lat: 41.1336, lng: 9.5353, name: "Porto Cervo (07026)"}, {lat: 40.5532, lng: 14.2222, name: "Capri"},
+        {lat: 44.303, lng: 9.209, name: "Portofino"}, {lat: 46.0167, lng: 9.2667, name: "Lake Como"},
+        {lat: 40.6333, lng: 14.602, name: "Amalfi"}, {lat: 40.628, lng: 14.4889, name: "Positano"},
+        {lat: 37.0344, lng: 27.4305, name: "Bodrum"}
+    ];
+    markersDataMed.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#1B365D", "fillColor": medColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "Mediterranean"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+
+    var greekIslandsColor = "#1B365D";
+    var markersDataGreek = [
+        {lat: 37.4467, lng: 25.3289, name: "Mykonos (846 00)"}, {lat: 36.3932, lng: 25.4615, name: "Santorini"},
+        {lat: 37.085, lng: 25.15, name: "Paros"}, {lat: 37.2479, lng: 23.1364, name: "Spetses"},
+        {lat: 37.3497, lng: 23.4669, name: "Hydra"}
+    ];
+    markersDataGreek.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#C5A770", "fillColor": greekIslandsColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "Greek Islands"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+
+    var spainColor = "#EDECE6";
+    var markersDataSpain = [
+        {lat: 38.9089, lng: 1.4329, name: "Ibiza"}, {lat: 36.5099, lng: -4.8858, name: "Marbella"},
+        {lat: 39.5669, lng: 2.6502, name: "Balearic Islands (07157)"}
+    ];
+    markersDataSpain.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#1B365D", "fillColor": spainColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "Spain/Balearics"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+
+    var croatiaMontenegroColor = "#8F9779";
+    var markersDataCroatia = [
+        {lat: 43.5081, lng: 16.4402, name: "Split"}, {lat: 43.1729, lng: 16.4424, name: "Hvar"},
+        {lat: 42.6507, lng: 18.0944, name: "Dubrovnik"}, {lat: 42.436, lng: 18.6972, name: "Tivat"}
+    ];
+    markersDataCroatia.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#1B365D", "fillColor": croatiaMontenegroColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "Croatia/Montenegro"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+    
+    var switzerlandColor = "#BFBFBF";
+    var markersDataSwiss = [
+        {lat: 46.2044, lng: 6.1432, name: "Geneva"}, {lat: 47.3769, lng: 8.5417, name: "Zürich"},
+        {lat: 46.497, lng: 9.838, name: "Saint Moritz"}, {lat: 46.4724, lng: 7.286, name: "Gstaad"}
+    ];
+    markersDataSwiss.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#1B365D", "fillColor": switzerlandColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "Switzerland"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+
+    var londonNumericIcon = L.divIcon({
+        html: '<div style="background-color:#1B365D; color:#FFFFFF; border-radius:50%; width:24px; height:24px; font-size:12px; line-height:24px; text-align:center; font-weight:bold; border: 1px solid #C5A770;">1</div>',
+        className: 'london-numeric-marker', 
+        iconSize: [24, 24],
+        iconAnchor: [12, 12], 
+        popupAnchor: [0, -12] 
+    });
+    var marker_london_numbered = L.marker(
+        [51.509, -0.151], 
+        {icon: londonNumericIcon, zIndexOffset: 1000} 
+    ).addTo(map_instance); 
+    marker_london_numbered.bindPopup(createPopup("London (Mayfair)", "Europe"));
+    allMarkersForBoundsCalculation.push(marker_london_numbered);
+
+    var middleEastColor = "#CD7F32";
+    var markersDataMidEast = [
+        {lat: 25.08, lng: 55.14, name: "Dubai Marina"}, {lat: 25.1121, lng: 55.138, name: "Palm Islands"}
+    ];
+    markersDataMidEast.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#1B365D", "fillColor": middleEastColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "Middle East"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+
+    var usEastCoastColor = "#1B365D"; 
+    var markersDataUS = [
+        {lat: 40.9263, lng: -72.2985, name: "The Hamptons"}, {lat: 40.9634, lng: -72.1848, name: "East Hampton"},
+        {lat: 40.8843, lng: -72.3895, name: "Southampton"}, {lat: 41.0359, lng: -71.9545, name: "Montauk"},
+        {lat: 41.3895, lng: -70.5136, name: "Edgartown"}, {lat: 41.2835, lng: -70.0995, name: "Nantucket"}
+    ];
+    markersDataUS.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#C5A770", "fillColor": usEastCoastColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "US East Coast"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+
+    var caribbeanColor = "#A4C8D1";
+    var markersDataCaribbean = [
+        {lat: 17.8993, lng: -62.8339, name: "Saint Barthélemy"}, {lat: 12.887, lng: -61.183, name: "Mustique"},
+        {lat: 18.55, lng: -64.358, name: "Necker Island"}, {lat: 17.1733, lng: -61.7868, name: "Jumby Bay Island"},
+        {lat: 21.962, lng: -72.1004, name: "Parrot Cay"}, {lat: 18.5, lng: -64.36, name: "Eustatia Island"},
+        {lat: 23.5937, lng: -75.9695, name: "Exuma"}
+    ];
+    markersDataCaribbean.forEach(data => {
+        let marker = L.circleMarker([data.lat, data.lng], {"bubblingMouseEvents": true, "color": "#1B365D", "fillColor": caribbeanColor, "fillOpacity": 0.9, "radius": 6, "weight": 1.2}).addTo(marker_cluster_group);
+        marker.bindPopup(createPopup(data.name, "Caribbean"));
+        allMarkersForBoundsCalculation.push(marker);
+    });
+    
+    if (allMarkersForBoundsCalculation.length > 0) {
+        var boundsFeatureGroup = L.featureGroup(allMarkersForBoundsCalculation);
+        map_instance.fitBounds(boundsFeatureGroup.getBounds(), {
+            padding: [60, 60],
+            maxZoom: 16 
+        });
+    } else {
+        // Fallback if no markers, though unlikely here
+        map_instance.setView([45, 15], 4);
+    }
+});       
+</script>
+</body>
+</html>
