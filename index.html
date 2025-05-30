@@ -64,25 +64,35 @@ color: #1B365D;
 <script>
     
     
-            var map_d04ba4463b435e93f14cfd2e6dd2a0e7 = L.map(
-                "map_d04ba4463b435e93f14cfd2e6dd2a0e7",
-                {
-                    center: [0, 0],
-                    crs: L.CRS.EPSG3857,
-                    zoom: 1,
-                    zoomControl: true,
-                    preferCanvas: false,
-                }
-            );
+           var map_d04ba4463b435e93f14cfd2e6dd2a0e7 = L.map(
+    "map_d04ba4463b435e93f14cfd2e6dd2a0e7",
+    {
+        center: [40, 10],    // pulls the view up into Europe/Mediterranean
+        zoom: 3,             // zooms in just a bit tighter
+        zoomControl: true,
+        preferCanvas: false
+    }
+);
+
 
             
 
         
     
             var tile_layer_a7d8a5bd0b6443113eceb250533989f4 = L.tileLayer(
-                "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-                {"attribution": "\u0026copy; \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"http://cartodb.com/attributions\"\u003eCartoDB\u003c/a\u003e, CartoDB \u003ca href =\"http://cartodb.com/attributions\"\u003eattributions\u003c/a\u003e", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_d04ba4463b435e93f14cfd2e6dd2a0e7);
+    "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+    {
+        attribution: "© OpenStreetMap contributors & CartoDB",
+        noWrap: true,
+        maxNativeZoom: 18,
+        maxZoom: 18,
+        minZoom: 0,
+        opacity: 1,
+        subdomains: "abc",
+        tms: false
+    }
+).addTo(map_d04ba4463b435e93f14cfd2e6dd2a0e7);
+
         
     
             var marker_cluster_ec906e923ab7ef029f7acac2868a54cf = L.markerClusterGroup(
@@ -994,10 +1004,12 @@ color: #1B365D;
         
     
     
-            map_d04ba4463b435e93f14cfd2e6dd2a0e7.fitBounds(
-                [[12.887, -75.9695], [51.509, 55.14]],
-                {}
-            );
+        // Zoom to show every marker with a little padding and cap max zoom
+map_d04ba4463b435e93f14cfd2e6dd2a0e7.fitBounds(
+    marker_cluster_ec906e923ab7ef029f7acac2868a54cf.getBounds(),
+    { padding: [50, 50], maxZoom: 5 }
+);
+
         
 </script>
 </html>
