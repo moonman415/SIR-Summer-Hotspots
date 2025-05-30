@@ -74,10 +74,9 @@ var map_d04ba4463b435e93f14cfd2e6dd2a0e7 = L.map(
     }
 );
 
-).addTo(map_d04ba4463b435e93f14cfd2e6dd2a0e7);
 
 
-
+map_d04ba4463b435e93f14cfd2e6dd2a0e7.addLayer(marker_cluster_ec906e923ab7ef029f7acac2868a54cf);
 
             
 
@@ -247,7 +246,15 @@ var map_d04ba4463b435e93f14cfd2e6dd2a0e7 = L.map(
 
         
     
-    
+    -map_d04ba4463b435e93f14cfd2e6dd2a0e7.fitBounds(
+-    marker_cluster_ec906e923ab7ef029f7acac2868a54cf.getBounds(),
+-    { padding: [50, 50], maxZoom: 5 }
+-);
++map_d04ba4463b435e93f14cfd2e6dd2a0e7.fitBounds(
++    marker_cluster_ec906e923ab7ef029f7acac2868a54cf.getBounds(),
++    { padding: [50, 50], maxZoom: 2 }
++);
+
             var circle_marker_61857b5db6b45f33c18100b00678a9c5 = L.circleMarker(
                 [41.5911, 9.2797],
                 {"bubblingMouseEvents": true, "color": "#1B365D", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#C5A770", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 6, "stroke": true, "weight": 1.2}
